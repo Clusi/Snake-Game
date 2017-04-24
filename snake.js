@@ -38,9 +38,9 @@ function startGame(){
 	createFood();
 	
 	gameExecutor = setInterval(move, gameSpeed);
-	//foodTimingExecutor = setInterval(timeStartGame, 100);
-	//starGameExecutor = setInterval(timeForFood, 100);
-	
+	starGameExecutor = setInterval(timeStartGame, 100);
+	foodTimingExecutor = setInterval(timeForFood,100);
+		
 }
 
 function clearScene(){
@@ -85,12 +85,11 @@ window.onload = function(){
 			startGame();
 		}
 	};
+	//starGameExecutor = setInterval(timeStartGame, 100);
 	timeStarted = new Date().getTime();
     foodStarted = new Date().getTime();
-	createSnake();
-	createFood();
-	foodTimingExecutor = setInterval(timeStartGame, 10);
-	starGameExecutor = setInterval(timeForFood, 10);
+	
+	
 }
 
 function timeStartGame(){
@@ -105,7 +104,8 @@ function timeStartGame(){
         var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
         // Display the result in the element with id="demo"
-        document.getElementById("startedTime").innerHTML = "Time: " + days + "d " + hours + "h "+ minutes + "m " + seconds + "s ";
+		
+       document.getElementById("startedTime").innerHTML = "Time: " + days + "d " + hours + "h "+ minutes + "m " + seconds + "s ";
 }
 function timeForFood(){
 	var nowTime = new Date().getTime();
@@ -124,6 +124,7 @@ function timeForFood(){
 
 //Create snake for the first time
 function createSnake(){
+	
     var startingPositionX = 50;
     var startingPositionY = 50;
     for (var i=0; i<startLenghtSnake; i++){
@@ -246,7 +247,7 @@ function createFood(){
 }
 
 function updateScore(){
-	document.getElementById("points").innerHTML = eatenItemsCount;
+	document.getElementById("score").innerHTML = eatenItemsCount;
 }
 
 function removeFood(){
@@ -260,6 +261,8 @@ function eatFood(){
 		eatenItemsCount++;
 		updateScore();
 		removeFood();
+		foodStarted = new Date().getTime();
+		
 	}
 }
 
@@ -280,7 +283,7 @@ function move(){
 		
 	}
 	
-	//createFood();
+	createFood();
 	eatFood();
 		
 	removeSnake();
