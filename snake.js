@@ -28,15 +28,28 @@ function startGame(){
 	
 	snake = new Array(startLenghtSnake);
 	createSnake();
+	createFood();
 	
 	gameExecutor = setInterval(move, gameSpeed);
 	
 }
 
-function endGame(){
-	clearInterval(gameExecutor);
+function clearScene(){
+	while(gameField.firstChild){
+		gameField.removeChild(gameField.firstChild);
+	}
 }
 
+function clearBoard(){
+	document.getElementById("loseMsg").style.visibility ='hidden';
+}
+function endGame(){
+	clearInterval(gameExecutor);
+	clearScene();
+	updateScore();
+	clearBoard();
+	
+}
 
 window.onload = function(){
 	gameField = document.getElementById("gameField");
@@ -45,32 +58,28 @@ window.onload = function(){
 	
 	document.onkeydown = function(e) {
 		
-    switch (e.keyCode) {
-        case 37:
+		if(e.keyCode == 37 && moveDirection!='right'){
             moveDirection = 'left';
-            break;
-        case 38:
+        }  
+        if(e.keyCode == 38 && moveDirection !='down'){
             moveDirection = 'up';
-            break;
-        case 39:
+		}
+        if(e.keyCode == 39 && moveDirection !='left'){
             moveDirection = 'right';
-            break;
-        case 40:
+        }
+        if(e.keyCode == 40 && moveDirection != 'up'){
             moveDirection = 'down';
-            break;
-		case 32:
+        }
+		if(e.keyCode == 32){
 			startGame();
-			break;
-    }
+		}
 	};
 	
-	createSnake();
-	move();
+	
 	//gameExecutor = setInterval(move, gameSpeed);
 	//drawSnake();
 	//setInterval(move, gameSpeed);
 }
-
 
 //Create snake for the first time
 function createSnake(){
@@ -82,7 +91,6 @@ function createSnake(){
 }	
 	
 function drawElement(posX,posY,className){
-	console.log(className);
 	var idiv =document.createElement('div');
         idiv.className =className;
 		idiv.style.left = posX+'px';
@@ -96,18 +104,15 @@ function drawSnake(){
 		}
 }
 
-
-
 function moveSnake(){
 	
 	var newSnake = [];
 
     for(var i = snake.length - 1 ; i > 0; i--) {
         newSnake[i] = snake[i-1];
-            
 	}
 		
-		newSnake[0] = {'x': 0, 'y': 0};
+	newSnake[0] = {'x': 0, 'y': 0};
 
 	if(moveDirection == 'up') {
         newSnake[0]['y'] = snake[0]['y'] - 1;
@@ -128,22 +133,14 @@ function moveSnake(){
 		newSnake[0]['y'] = snake[0]['y'];
 		newSnake[0]['x'] = snake[0]['x'] - 1;
 	}
-		
-
+	
 	snake = newSnake;
-	
-}
-
-function clearScene(){
-	
-	while(gameField.firstChild){
-		gameField.removeChild(gameField.firstChild);
-	}
 }
 
 function holdsPosition(posX,posY){
 	for (var i=0;i<snake.length;i++){
-		if(snake[i].x == posX &&snake[i].y == posY){
+		if(snake[i].x == posX-5 &&snake[i].y == posY-5){
+			console.log(snake[i].x,snake[i].y)
 			return true;
 		}
 	}
@@ -152,15 +149,13 @@ function holdsPosition(posX,posY){
 
 function crash(){
 	//console.log(gameFieldHeight)
-	
 	if(
-		snake[0].x >=gameFieldWidth-10 ||
+		snake[0].x >=gameFieldWidth ||
 		snake[0].x <0 ||
-		snake[0].y >= gameFieldHeight-20 ||
+		snake[0].y >= gameFieldHeight ||
 		snake[0].y <0){
 			return true;
-		}
-			
+		}	
 	return false;	
 }
 
@@ -171,34 +166,45 @@ function notExistFood(){
 	}
 	return false;
 }
+
 function createFood(){
 	var posX ;
 	var posY;
 	if(notExistFood()){
 		do{
-			posX = Math.floor(Math.random()*50)*snakeElementWidth ;
-			posY = Math.floor(Math.random()*50)*snakeElementHeight;
+			posX = Math.floor(Math.random()*40)*snakeElementWidth ;
+			posY = Math.floor(Math.random()*40)*snakeElementHeight;
 		}
 		while(holdsPosition(posX,posY));
-		console.log(posX);
-		console.log(posY);
 		food = {'x':posX,'y':posY};
 		drawElement(posX,posY,'food');
 	}
 }
-function eatFood(){
-	if(holdsPosition(food.x,food.y)){
-		var newSnake = [];
 
-    for(var i = snake.length - 1 ; i > 0; i--) {
-        newSnake[i] = snake[i-1];
-            
-	}
-		
-	newSnake[0] = {'x': food.x, 'y': food.y};
-	snake = new Snake;
-            
+function updateScore(){
+	document.getElementById("points").innerHTML = eatenItemsCount;
+}
+
+function removeFood(){
+	gameField.removeChild(document.getElementsByClassName("food")[0]); 
+}
+
+function eatFood(){
 	
+	if(holdsPosition(food.x,food.y)){
+		console.log('eat');
+		snake.push({'x': snake[snake.length-1]['x'], 'y': snake[snake.length-1]['y']});
+		console.log(snake.length);
+		eatenItemsCount++;
+		updateScore();
+		removeFood();
+	}
+}
+
+function removeSnake(){
+	var child = document.getElementsByClassName("bodyPart")
+	for(var i=0;i<child.length;i++){
+		gameField.removeChild(child[i]);
 	}
 }
 function move(){
@@ -215,6 +221,6 @@ function move(){
 	createFood();
 	eatFood();
 		
-	clearScene();
+	removeSnake();
 	drawSnake();
 }
