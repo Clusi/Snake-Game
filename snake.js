@@ -2,19 +2,27 @@
 var gameField;
 var moveDirection ='right'
 var gameExecutor;
-var gameSpeed = 10;
+var foodTimingExecutor;
+var starGameExecutor;
+var gameSpeed = 5;
 var eatenItemsCount = 0;
 var gameActive = "true";
 
 var snake;
-var snakeElementWidth = 10;
-var snakeElementHeight = 10;
-var startLenghtSnake = 10;
+var snakeElementWidth = 8;
+var snakeElementHeight = 8;
+var startLenghtSnake = 100;
+
+var foodElementHeight = 10;
+var foodElementWidth = 10;
 
 var gameFieldWidth;
-var gameFieldHeight;
+var foodFieldHeight;
 
 var food;
+var secondsForFood = 10;
+var timeStarted;
+var foodStarted;
 
 snake = new Array(startLenghtSnake);
 
@@ -23,7 +31,6 @@ function startGame(){
 	eatenItemsCount = 0;
 	moveDirection ='right'
 	gameActive = "true";
-	gameSpeed = 10;
 	endGame();
 	
 	snake = new Array(startLenghtSnake);
@@ -31,6 +38,8 @@ function startGame(){
 	createFood();
 	
 	gameExecutor = setInterval(move, gameSpeed);
+	foodTimingExecutor = setInterval(timeStartGame, 100);
+	starGameExecutor = setInterval(timeForFood, 100);
 	
 }
 
@@ -45,6 +54,8 @@ function clearBoard(){
 }
 function endGame(){
 	clearInterval(gameExecutor);
+	clearInterval(foodTimingExecutor);
+	clearInterval(starGameExecutor);
 	clearScene();
 	updateScore();
 	clearBoard();
@@ -74,11 +85,35 @@ window.onload = function(){
 			startGame();
 		}
 	};
-	
-	
-	//gameExecutor = setInterval(move, gameSpeed);
-	//drawSnake();
-	//setInterval(move, gameSpeed);
+	timeStarted = new Date().getTime();
+    foodStarted = new Date().getTime();
+}
+
+function timeStartGame(){
+	var nowTime = new Date().getTime();
+        // Find the distance between now an the count down date
+        var distance = nowTime - timeStarted;
+
+        // Time calculations for days, hours, minutes and seconds
+        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        // Display the result in the element with id="demo"
+        document.getElementById("startedTime").innerHTML = "Time: " + days + "d " + hours + "h "+ minutes + "m " + seconds + "s ";
+}
+function timeForFood(){
+	var nowTime = new Date().getTime();
+        // Find the distance between now an the count down date
+        var distance = nowTime - foodStarted;
+
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        var remainingTime = secondsForFood - seconds;
+        document.getElementById("foodTime").innerHTML = "Food respawn in: " + remainingTime + " s";
+        if (remainingTime <= 0){
+            createFood();
+        }
 }
 
 //Create snake for the first time
@@ -99,7 +134,7 @@ function drawElement(posX,posY,className){
 }
 
 function drawSnake(){
-	for (var i=0; i<startLenghtSnake; i++){
+	for (var i=0; i<snake.length; i++){
 			drawElement(snake[i].x,snake[i].y,'bodyPart');
 		}
 }
@@ -139,7 +174,7 @@ function moveSnake(){
 
 function holdsPosition(posX,posY){
 	for (var i=0;i<snake.length;i++){
-		if(snake[i].x == posX-5 &&snake[i].y == posY-5){
+		if(snake[i].x == posX &&snake[i].y == posY){
 			console.log(snake[i].x,snake[i].y)
 			return true;
 		}
@@ -147,9 +182,32 @@ function holdsPosition(posX,posY){
 	return false;
 }
 
+function holdFood(){
+	
+	if((snake[0].x>= food.x && snake[0].x<=food.x+foodElementWidth && snake[0].y>= food.y && snake[0].y<=food.y+foodElementHeight) ||
+	(snake[0].x+snakeElementWidth>= food.x && snake[0].x+snakeElementWidth<=food.x+foodElementWidth && snake[0].y+snakeElementHeight>= food.y && snake[0].y+snakeElementHeight<=food.y+foodElementHeight)){
+		return true
+	};
+	return false;
+}
+
+function crashHimselfSnake(){
+	for(var i = 0; i < snake.length; i++) {
+            for(var j = 0; j < snake.length; j++)
+            {
+                if(i != j) {
+                    if(snake[i].x == snake[j].x && snake[i].y == snake[j].y)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+}
 function crash(){
 	//console.log(gameFieldHeight)
-	if(
+	if( crashHimselfSnake() ||
 		snake[0].x >=gameFieldWidth ||
 		snake[0].x <0 ||
 		snake[0].y >= gameFieldHeight ||
@@ -191,10 +249,8 @@ function removeFood(){
 
 function eatFood(){
 	
-	if(holdsPosition(food.x,food.y)){
-		console.log('eat');
+	if(holdFood()){
 		snake.push({'x': snake[snake.length-1]['x'], 'y': snake[snake.length-1]['y']});
-		console.log(snake.length);
 		eatenItemsCount++;
 		updateScore();
 		removeFood();
@@ -218,7 +274,7 @@ function move(){
 		
 	}
 	
-	createFood();
+	//createFood();
 	eatFood();
 		
 	removeSnake();
