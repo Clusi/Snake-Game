@@ -20,7 +20,7 @@ var gameFieldWidth;
 var foodFieldHeight;
 
 var food;
-var secondsForFood = 10;
+var secondsForFood = 6;
 var timeStarted;
 var foodStarted;
 
@@ -38,8 +38,8 @@ function startGame(){
 	createFood();
 	
 	gameExecutor = setInterval(move, gameSpeed);
-	foodTimingExecutor = setInterval(timeStartGame, 100);
-	starGameExecutor = setInterval(timeForFood, 100);
+	//foodTimingExecutor = setInterval(timeStartGame, 100);
+	//starGameExecutor = setInterval(timeForFood, 100);
 	
 }
 
@@ -87,6 +87,10 @@ window.onload = function(){
 	};
 	timeStarted = new Date().getTime();
     foodStarted = new Date().getTime();
+	createSnake();
+	createFood();
+	foodTimingExecutor = setInterval(timeStartGame, 10);
+	starGameExecutor = setInterval(timeForFood, 10);
 }
 
 function timeStartGame(){
@@ -112,6 +116,8 @@ function timeForFood(){
         var remainingTime = secondsForFood - seconds;
         document.getElementById("foodTime").innerHTML = "Food respawn in: " + remainingTime + " s";
         if (remainingTime <= 0){
+			removeFood();
+			foodStarted = new Date().getTime();
             createFood();
         }
 }
