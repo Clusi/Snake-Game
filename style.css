@@ -1,0 +1,63 @@
+body{
+	background: #1E2930
+}
+
+#game{
+	width: 650px;
+}
+
+#gameField{
+	width: 400px;
+	height: 400px;
+	float: left;
+	margin-right: 20px;
+	
+	background: #13191E;
+	position:relative;
+}
+
+#gameInfo{
+	width: 200px;
+	height: 400px;
+	float: left;
+		
+	background: #13191E;
+	font-family:sams-serif;
+	text-align:center;
+	color:white;
+	
+}
+
+#points {
+	margin:5px;
+	height:120px;
+	margin-top:15px;
+	
+}
+
+#gamemsg{
+	font-size: 16pt;
+	margin-bottom:35px;
+	visibility:hidden;
+	color:#E01B6A;
+}
+
+#rules{
+	margin:5px;
+	font-size:12pt;
+}
+
+.bodyPart{
+	width: 8px;
+	height: 8px;
+	background:white;
+	position:absolute;
+	
+}
+
+.food{
+	width: 10px;
+	height: 10px;
+	background:red;
+	position:absolute;
+}
