@@ -4,14 +4,14 @@ var moveDirection ='right'
 var gameExecutor;
 var foodTimingExecutor;
 var starGameExecutor;
-var gameSpeed = 5;
+var gameSpeed = 50;
 var eatenItemsCount = 0;
 var gameActive = "true";
 
 var snake;
 var snakeElementWidth = 8;
 var snakeElementHeight = 8;
-var startLenghtSnake = 100;
+var startLenghtSnake = 5;
 
 var foodElementHeight = 10;
 var foodElementWidth = 10;
@@ -87,8 +87,7 @@ window.onload = function(){
 	};
 	//starGameExecutor = setInterval(timeStartGame, 100);
 	timeStarted = new Date().getTime();
-    foodStarted = new Date().getTime();
-	
+    foodStarted = new Date().getTime();	
 	
 }
 
@@ -128,7 +127,7 @@ function createSnake(){
     var startingPositionX = 50;
     var startingPositionY = 50;
     for (var i=0; i<startLenghtSnake; i++){
-        snake[i] = {'x':startingPositionX, 'y':startingPositionY+i};
+        snake[i] = {'x':startingPositionX, 'y':startingPositionY+snakeElementHeight*i};
 	}
 }	
 	
@@ -157,23 +156,23 @@ function moveSnake(){
 	newSnake[0] = {'x': 0, 'y': 0};
 
 	if(moveDirection == 'up') {
-        newSnake[0]['y'] = snake[0]['y'] - 1;
+        newSnake[0]['y'] = snake[0]['y'] - snakeElementHeight;
         newSnake[0]['x'] = snake[0]['x'];
     } 
 	else
     if(moveDirection == 'right') {
         newSnake[0]['y'] = snake[0]['y'];
-        newSnake[0]['x'] = snake[0]['x'] + 1;
+        newSnake[0]['x'] = snake[0]['x'] + snakeElementHeight;
 		}
 	else
     if(moveDirection == 'down') {
-		newSnake[0]['y'] = snake[0]['y'] + 1;
+		newSnake[0]['y'] = snake[0]['y'] + snakeElementHeight;
         newSnake[0]['x'] = snake[0]['x'];
 	} 
 	else
 	if(moveDirection == 'left') {
 		newSnake[0]['y'] = snake[0]['y'];
-		newSnake[0]['x'] = snake[0]['x'] - 1;
+		newSnake[0]['x'] = snake[0]['x'] - snakeElementHeight;
 	}
 	
 	snake = newSnake;
@@ -273,6 +272,7 @@ function removeSnake(){
 	}
 }
 function move(){
+	console.log(snake.length);
 	if(gameActive == 'false'){
 		return;
 	}
